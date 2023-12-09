@@ -356,6 +356,11 @@ export class MPM {
         if (!Array.isArray(defs)) return null
 
         const definition = defs.find(def => def['name'] === name)
+        if (!definition) {
+            console.log('Cannot find definition', name, 'in', defs)
+            return null
+        }
+
         if (definitionType === 'ornamentDef') {
             const dynamicsGradient = definition.dynamicsGradient
             const temporalSpread = definition.temporalSpread
@@ -622,8 +627,8 @@ export const parseMPM = (xml: string) => {
                 type: 'ornament' as 'ornament',
                 date: +(el.getAttribute('date') || 0),
                 "name.ref": el.getAttribute('name.ref') || '',
-                'note.order': el.getAttribute('name.ref') || '',
-                scale: +(el.getAttribute('name.ref') || ''),
+                'note.order': el.getAttribute('note.order') || '',
+                scale: +(el.getAttribute('scale') || ''),
                 'xml:id': el.getAttribute('xml:id') || `ornament_${v4()}`
             }
 
@@ -683,11 +688,24 @@ export const parseMPM = (xml: string) => {
             return result
         })
 
+        const rubatos = [...domPart.querySelectorAll('rubato')].map(el => {
+            const result: Rubato = {
+                type: 'rubato' as 'rubato',
+                date: +(el.getAttribute('date') || 0),
+                frameLength: +(el.getAttribute('frameLength') || ''),
+                loop: el.getAttribute('loop') === 'true',
+                intensity: +(el.getAttribute('intensity') || ''),
+                'xml:id': el.getAttribute('xml:id') || `rubato_${v4()}`
+            }
+            return result
+        })
+
         mpm.insertInstructions(dynamics, part)
         mpm.insertInstructions(ornaments, part)
         mpm.insertInstructions(tempos, part)
         mpm.insertInstructions(asynchronies, part)
         mpm.insertInstructions(articulations, part)
+        mpm.insertInstructions(rubatos, part)
         mpm.insertDefinitions(ornamentDefs, part)
     }
 
