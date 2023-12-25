@@ -51,6 +51,7 @@ export interface Dynamics extends DatedInstruction<'dynamics'>, WithXmlId {
     'volume': number | string
     'transition.to'?: number
     'protraction'?: number
+    'curvature'?: number
 }
 
 /**
