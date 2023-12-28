@@ -85,14 +85,14 @@ export type DynamicsGradient = 'crescendo' | 'decrescendo' | 'no-gradient'
  */
 export interface Ornament extends DatedInstruction<'ornament'>, WithXmlId {
     'name.ref': string
-    'note.order': string
+    'note.order'?: string
     'frameLength'?: number
     'frame.start'?: number
     'noteoff.shift'?: string,
     'transition.from'?: number
     'transition.to'?: number
     'time.unit'?: 'ticks' | 'milliseconds'
-    'scale': number
+    'scale'?: number
     'gradient'?: 'crescendo' | 'decrescendo' | 'no-gradient'
 }
 
