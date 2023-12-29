@@ -20,7 +20,7 @@ export interface OrnamentDef extends Definition<'ornament'> {
     'name'?: string
     'frameLength'?: number
     'frame.start'?: number
-    'noteoff.shift'?: string,
+    'noteoff.shift'?: NoteOffShift,
     'transition.from'?: number
     'transition.to'?: number
     'time.unit'?: 'ticks' | 'milliseconds'
@@ -79,6 +79,7 @@ export interface Articulation extends DatedInstruction<'articulation'>, WithXmlI
 }
 
 export type DynamicsGradient = 'crescendo' | 'decrescendo' | 'no-gradient'
+export type NoteOffShift = boolean | 'monophonic'
 
 /**
  * Maps the <ornament> element of MPM
@@ -88,7 +89,7 @@ export interface Ornament extends DatedInstruction<'ornament'>, WithXmlId {
     'note.order'?: string
     'frameLength'?: number
     'frame.start'?: number
-    'noteoff.shift'?: string,
+    'noteoff.shift'?: NoteOffShift,
     'transition.from'?: number
     'transition.to'?: number
     'time.unit'?: 'ticks' | 'milliseconds'
@@ -388,11 +389,15 @@ export class MPM {
      * @param instruction 
      * @param part a part number or 'global'
      */
-    insertInstructions(instructions: AnyInstruction[], part: Part) {
-        if (!instructions.length) return
+    insertInstructions(instructions: AnyInstruction[], part: Part, overwrite = false) {
+        for (const instruction of instructions) {
+            this.insertInstruction(instruction, part, overwrite)
+        }
+    }
 
-        const instructionType = instructions[0].type
-        const correspondingMapName = this.correspondingMapNameFor(instructionType)
+    insertInstruction(instruction: AnyInstruction, part: Part, overwrite = false) {
+        const type = instruction.type
+        const correspondingMapName = this.correspondingMapNameFor(type)
         if (!correspondingMapName) return
 
         const map = this.getMap(correspondingMapName, part, true)
@@ -402,15 +407,45 @@ export class MPM {
             return
         }
 
-        if (Array.isArray(map.get(instructionType))) {
-            map.set(instructionType,
-                [...map.get(instructionType), // old instructions
-                ...instructions.map(i => ({ '@': i }))] // new instructions
-                    .sort((a, b) => (a['@']['date'] || 0) - (b['@']['date'] || 0)) // sort everything by date
-            )
+        const instructions = map.get(type)
+        if (Array.isArray(instructions)) {
+            const existingInstruction = instructions.find(i => {
+                // a instruction is referring to the same thing
+                // when both of them have @noteids and they are identical ...
+                return (instruction.noteid && i.noteid && (instruction.noteid === i.noteid)) ||
+                    // ... or neither of them has a @noteid but the dates are identical
+                    (!instruction.noteid && !i.noteid && i.date === instruction.date)
+            })
+
+            if (existingInstruction && existingInstruction['@']) {
+                // if an instruction referring to the exact same thing
+                // exists already, we try to combine it with the newly
+                // given thing.
+                const newEntries = Object.entries(instruction)
+                for (const [key, value] of newEntries) {
+                    // if the attribute exists already, 
+                    // overwrite if the overwrite flag exists
+                    if (existingInstruction['@'][key]) {
+                        if (overwrite) existingInstruction['@'][key] = value
+                    }
+                    else {
+                        // otherwise simply insert the new attribute
+                        existingInstruction['@'][key] = value
+                    }
+                }
+            }
+            else {
+                // if no instruction exists yet, go ahead and insert the new one 
+                map.set(type,
+                    [...map.get(type), // old instructions
+                    { '@': instruction }] // new instruction
+                        .sort((a, b) => (a['@']['date'] || 0) - (b['@']['date'] || 0)) // make sure the instructions is placed at its right date
+                )
+            }
         }
         else {
-            map.set(instructionType, instructions.map(i => ({ '@': i })))
+            // no instructions yet? Create a new array
+            map.set(type, [{ '@': instruction }])
         }
     }
 
