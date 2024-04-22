@@ -475,7 +475,7 @@ export class MPM {
      */
     getInstructions<T>(instructionType?: InstructionType, part?: Part): T[] {
         const result = []
-        const parts: Part[] = part ? [part] : ['global', 0, 1]
+        const parts: Part[] = part !== undefined ? [part] : ['global', 0, 1]
         const instructionTypesToGet = instructionType ? [instructionType] : instructionTypes
 
         for (const part of parts) {
