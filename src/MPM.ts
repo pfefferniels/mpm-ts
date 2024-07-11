@@ -131,8 +131,12 @@ export class MPM {
         if (!this.doc.performance.parts.has(scope)) {
             this.doc.performance.parts.set(scope, {
                 type: 'part',
-                dated: {},
-                header: {}
+                dated: {
+                    type: 'dated'
+                },
+                header: {
+                    type: 'header'
+                }
             })
         }
 
@@ -202,14 +206,23 @@ export class MPM {
         if (!this.doc.performance.parts.has(scope)) {
             this.doc.performance.parts.set(scope, {
                 type: 'part',
-                dated: {},
-                header: {}
+                dated: {
+                    type: 'dated'
+                },
+                header: {
+                    type: 'header'
+                }
             })
         }
 
         const part = this.doc.performance.parts.get(scope)
         const mapName = mapNames[instruction.type]
+
+        if (!part.dated[mapName]) {
+            part.dated[mapName] = []
+        }
         const map = part.dated[mapName] as (typeof instruction)[]
+
         const existing = map.find(i => i.date === instruction.date)
         if (existing && overwrite) {
             // TODO

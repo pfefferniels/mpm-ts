@@ -38,5 +38,5 @@ type WithStylesFor<T> = T extends Definition<infer U>
     ? { [K in typeof styleNames[U & keyof typeof styleNames]]?: T[] }
     : never;
 
-export type Header = UnionToIntersection<WithStylesFor<AnyDefinition>>;
+export type Header = UnionToIntersection<WithStylesFor<AnyDefinition>> & Typed<'header'>;
 

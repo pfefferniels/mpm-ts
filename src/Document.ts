@@ -24,9 +24,18 @@ type RelatedResource = {
     type: string
 }
 
+interface Author extends Typed<'author'> {
+    number: number 
+    text: string
+}
+
+interface Comment extends Typed<'comment'> {
+    text: string
+}
+
 export interface Metadata extends Typed<'metadata'> {
-    authors: string[],
-    comments: string[],
+    authors: Author[],
+    comments: Comment[],
     relatedResources: RelatedResource[]
 }
 

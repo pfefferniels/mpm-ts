@@ -11,19 +11,17 @@ const handlePerformance = (p: Performance) => {
     return {
         performance: [
             {
-                '@:': {
-                    '@_name': p.name,
-                    '@_pulsesPerQuarter': 720
-                }
-            },
-            {
                 part: [...p.parts.values()].map(p => handleNode(p))
             }
-        ]
+        ],
+        ':@': {
+            '@_name': p.name,
+            '@_pulsesPerQuarter': 720
+        }
     }
 }
 
-const handleNode = (node: AnyNode) => {
+export const handleNode = (node: AnyNode) => {
     const handlers: { [K in AnyNode['type']]?: (node: AnyNode) => object } = {
         performance: handlePerformance,
     }
@@ -33,8 +31,15 @@ const handleNode = (node: AnyNode) => {
         const children = []
         const attrs = {}
         Object.entries(node).forEach(([k, v]) => {
+            if (k === 'type') return
+            else if (k === 'type_') k = 'type'
+            else if (k === 'text') k = '#text'
+
             if (typeof v === 'number' || typeof v === 'string') {
                 attrs[`@_${k}`] = v
+            }
+            else if (Array.isArray(v)) {
+                children.push(...v.map(node => handleNode(node)))
             }
             else {
                 children.push(handleNode(v))
@@ -42,7 +47,8 @@ const handleNode = (node: AnyNode) => {
         })
 
         const obj = {}
-        obj[node.type] = [{ '@:': attrs }, ...children]
+        obj[node.type] = children,
+            obj[':@'] = attrs
         return obj
     }
     else {
@@ -57,7 +63,7 @@ export const exportMPM = (mpm: MPM) => {
         preserveOrder: true,
         ignoreAttributes: false,
     })
-    return builder.build(root)
+    return builder.build([root])
 }
 
 const parsePart = (scope: Scope, element: Element, mpm: MPM) => {
