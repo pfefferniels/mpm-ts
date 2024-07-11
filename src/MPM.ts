@@ -249,6 +249,12 @@ export class MPM {
      * @returns 
      */
     getInstructions<T>(type?: InstructionType, scope?: Scope): T[] {
+        // if the user asks for a specific scope 
+        // which is not given, we return an empty array
+        if (scope !== undefined && !this.doc.performance.parts.has(scope)) {
+            return []
+        }
+
         const result = []
         const parts: Scope[] = scope ? [scope] : [...this.doc.performance.parts.keys()]
         const instructionTypesToGet = type ? [type] : instructionTypes
@@ -256,7 +262,9 @@ export class MPM {
         for (const part of parts) {
             for (const instructionType of instructionTypesToGet) {
                 const mapName = mapNames[instructionType]
-                const map = this.doc.performance.parts.get(part).dated[mapName] as T[]
+                const map = this.doc.performance.parts.get(part).dated[mapName] as T[] | undefined
+                if (!map) continue
+
                 result.push(...map)
             }
         }
