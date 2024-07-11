@@ -40,5 +40,35 @@ test('serializes MPM', () => {
     const serialized = handleNode(mpm.doc)
     console.log(serialized)
 
-    expect(exportMPM(mpm)).toEqual("<mpm><metadata><author number=\"1\" #text=\"John Doe\"></author><author number=\"2\" #text=\"Jane Doe\"></author></metadata><performance name=\"test performance\" pulsesPerQuarter=\"720\"><part><global><header></header><dated><articulation relativeDuration=\"0.5\" date=\"720\" xml:id=\"any_id\"></articulation></dated></global><part midi.port=\"0\" midi.channel=\"0\" number=\"1\"><header></header><dated><articulation relativeDuration=\"0.2\" date=\"1440\" xml:id=\"any_id\"></articulation></dated></part></part></performance></mpm>")
+    expect(exportMPM(mpm)).toEqual(`
+<mpm>
+  <metadata>
+    <authors>
+      <author number="1" #text="John Doe"></author>
+      <author number="2" #text="Jane Doe"></author>
+    </authors>
+    <comments></comments>
+    <relatedResources></relatedResources>
+  </metadata>
+  <performance name="test performance" pulsesPerQuarter="720">
+    <part>
+      <global>
+        <header></header>
+        <dated>
+          <articulationMap>
+            <articulation relativeDuration="0.5" date="720" xml:id="any_id"></articulation>
+          </articulationMap>
+        </dated>
+      </global>
+      <part midi.port="0" midi.channel="0" number="1">
+        <header></header>
+        <dated>
+          <articulationMap>
+            <articulation relativeDuration="0.2" date="1440" xml:id="any_id"></articulation>
+          </articulationMap>
+        </dated>
+      </part>
+    </part>
+  </performance>
+</mpm>`)
 });

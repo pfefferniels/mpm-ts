@@ -65,7 +65,9 @@ export const handleNode = (node: AnyNode) => {
                 attrs[`@_${k}`] = v ? 'true' : 'false'
             }
             else if (Array.isArray(v)) {
-                children.push(...v.map(node => handleNode(node)))
+                const obj = {}
+                obj[k] = v.map(node => handleNode(node))
+                children.push(obj)
             }
             else {
                 children.push(handleNode(v))
