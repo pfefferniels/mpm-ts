@@ -52,12 +52,17 @@ export const handleNode = (node: AnyNode) => {
         const children = []
         const attrs = {}
         Object.entries(node).forEach(([k, v]) => {
+            if (v === undefined) return
+
             if (k === 'type') return
             else if (k === 'type_') k = 'type'
             else if (k === 'text') k = '#text'
 
             if (typeof v === 'number' || typeof v === 'string') {
                 attrs[`@_${k}`] = v
+            }
+            else if (typeof v === 'boolean') {
+                attrs[`@_${k}`] = v ? 'true' : 'false'
             }
             else if (Array.isArray(v)) {
                 children.push(...v.map(node => handleNode(node)))
@@ -83,6 +88,7 @@ export const exportMPM = (mpm: MPM) => {
     const builder = new XMLBuilder({
         preserveOrder: true,
         ignoreAttributes: false,
+        format: true
     })
     return builder.build([root])
 }
