@@ -147,6 +147,10 @@ export class MPM {
             return
         }
 
+        if (!part.header[styleName]) {
+            part.header[styleName] = []
+        }
+
         const style = part.header[styleName] as (typeof definition)[]
         style.push(definition)
     }
