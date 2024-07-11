@@ -184,7 +184,9 @@ export class MPM {
         for (const part of parts) {
             for (const defType of defTypeToGet) {
                 const mapName = styleNames[defType]
-                const map = this.doc.performance.parts.get(part).header[mapName] as T[]
+                const map = this.doc.performance.parts.get(part).header[mapName] as T[] | undefined 
+                if (!map) continue
+
                 result.push(...map)
             }
         }
