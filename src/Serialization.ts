@@ -2,16 +2,37 @@ import { v4 } from "uuid"
 import { MPM } from "."
 import { Articulation, Asynchrony, Dated, Dynamics, Ornament, Rubato, Tempo } from "./Dated"
 import { Scope, Performance, Part, Document } from "./Document"
-import { OrnamentDef } from "./Header"
+import { Header, OrnamentDef } from "./Header"
 import { XMLBuilder } from "fast-xml-parser"
 
-type AnyNode = Performance | Part | Document | Dated
+type AnyNode = Performance | Part | Document | Dated | Header
 
 const handlePerformance = (p: Performance) => {
     return {
         performance: [
             {
-                part: [...p.parts.values()].map(p => handleNode(p))
+                part: [...p.parts].map(([scope, part]) => {
+                    if (scope === 'global') {
+                        return {
+                            global: [
+                                handleNode(part.header),
+                                handleNode(part.dated)
+                            ]
+                        }
+                    }
+
+                    return {
+                        part: [
+                            handleNode(part.header),
+                            handleNode(part.dated)
+                        ],
+                        ':@': {
+                            '@_midi.port': 0,
+                            '@_midi.channel': scope,
+                            '@_number': scope + 1
+                        }
+                    }
+                })
             }
         ],
         ':@': {
