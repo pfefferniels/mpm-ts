@@ -48,7 +48,7 @@ export interface Articulation extends DatedInstruction<'articulation'>, WithXmlI
     relativeDuration: number
 }
 
-export type DynamicsGradient = 'crescendo' | 'decrescendo' | 'no-gradient'
+export type SimpleDynamicsGradient = 'crescendo' | 'decrescendo' | 'no-gradient'
 export type NoteOffShift = boolean | 'monophonic'
 
 /**
@@ -64,7 +64,7 @@ export interface Ornament extends DatedInstruction<'ornament'>, WithXmlId {
     'transition.to'?: number
     'time.unit'?: 'ticks' | 'milliseconds'
     'scale'?: number
-    'gradient'?: 'crescendo' | 'decrescendo' | 'no-gradient'
+    'gradient'?: SimpleDynamicsGradient
 }
 
 /**

@@ -5,13 +5,21 @@ export interface Definition<T extends string> extends Typed<T> {
     name: string
 }
 
-export interface OrnamentDef extends Definition<'ornamentDef'> {
-    frameLength: number
-    'frame.start': number
-    'noteoff.shift': NoteOffShift,
-    'transition.from': number
+export interface DynamicsGradient extends Typed<'dynamicsGradient'> {
+    'transition.from': number 
     'transition.to': number
+}
+
+export interface TemporalSpread extends Typed<'temporalSpread'> {
+    'frame.start': number 
+    frameLength: number 
     'time.unit': 'ticks' | 'milliseconds'
+    'noteoff.shift': NoteOffShift
+}
+
+export interface OrnamentDef extends Definition<'ornamentDef'> {
+    dynamicsGradient?: DynamicsGradient
+    temporalSpread?: TemporalSpread
 }
 
 export interface ArticulationDef extends Definition<'articulationDef'> {
