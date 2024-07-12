@@ -56,7 +56,12 @@ export const handleNode = (node: AnyNode) => {
 
             if (k === 'type') return
             else if (k === 'type_') k = 'type'
-            else if (k === 'text') k = '#text'
+            else if (k === 'text' && typeof v === 'string') {
+                children.push({
+                    '#text': v
+                })
+                return
+            }
 
             if (typeof v === 'number' || typeof v === 'string') {
                 attrs[`@_${k}`] = v

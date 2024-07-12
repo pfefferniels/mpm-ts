@@ -12,12 +12,7 @@ export class MPM {
     constructor() {
         this.doc = {
             type: 'mpm',
-            metadata: {
-                type: 'metadata',
-                authors: [],
-                comments: [],
-                relatedResources: []
-            },
+            metadata: [],
             performance: {
                 type: 'performance',
                 name: '',

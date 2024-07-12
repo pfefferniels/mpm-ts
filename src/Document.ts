@@ -33,11 +33,7 @@ interface Comment extends Typed<'comment'> {
     text: string
 }
 
-export interface Metadata extends Typed<'metadata'> {
-    authors: Author[],
-    comments: Comment[],
-    relatedResources: RelatedResource[]
-}
+export type Metadata = (Author | Comment | RelatedResource)[]
 
 export interface Document extends Typed<'mpm'> {
     performance: Performance

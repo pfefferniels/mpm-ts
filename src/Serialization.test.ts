@@ -2,26 +2,25 @@ import { expect, test } from '@jest/globals';
 import { exportMPM, handleNode, MPM } from '.';
 
 test('serializes MPM', () => {
-    const mpm = new MPM()
+  const mpm = new MPM()
 
-    mpm.setPerformanceName('test performance')
+  mpm.setPerformanceName('test performance')
 
-    mpm.setMetadata({
-        type: 'metadata',
-        authors: [
-            {
-                type: 'author',
-                number: 1,
-                text: 'John Doe'
-            },
-            {
-                type: 'author',
-                number: 2,
-                text: 'Jane Doe'
-            }],
-        comments: [],
-        relatedResources: []
-    })
+  mpm.setMetadata([
+    {
+      type: 'author',
+      number: 1,
+      text: 'John Doe'
+    },
+    {
+      type: 'comment',
+      text: 'based on musical intuition'
+    },
+    {
+      type: 'relatedResources',
+      uri: 'test.mei'
+    }
+  ])
 
     mpm.insertInstruction({
         type: 'articulation',
@@ -43,12 +42,9 @@ test('serializes MPM', () => {
     expect(exportMPM(mpm)).toEqual(`
 <mpm>
   <metadata>
-    <authors>
-      <author number="1" #text="John Doe"></author>
-      <author number="2" #text="Jane Doe"></author>
-    </authors>
-    <comments></comments>
-    <relatedResources></relatedResources>
+    <author number="1">John Doe</author>
+    <comment>based on musical intuition</comment>
+    <relatedResources uri="test.mei"></relatedResources>
   </metadata>
   <performance name="test performance" pulsesPerQuarter="720">
     <part>
