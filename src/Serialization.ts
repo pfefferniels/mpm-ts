@@ -7,6 +7,20 @@ import { XMLBuilder } from "fast-xml-parser"
 
 type AnyNode = Performance | Part | Document | Dated | Header | StyleDef<AnyDefinition>
 
+const handleHeader = (header: Header) => {
+    return {
+        header: Object
+            .entries(header)
+            .filter(([k,]) => k !== 'type')
+            .map(([k, v]) => {
+                const obj = {}
+                obj[k] = [handleNode(v)]
+                return obj
+            })
+    }
+}
+
+
 const handleDated = (dated: Dated) => {
     return {
         dated: Object
@@ -47,32 +61,28 @@ const handleStyleDef = (styleDef: StyleDef<AnyDefinition>) => {
 
 const handlePerformance = (p: Performance) => {
     return {
-        performance: [
-            {
-                part: [...p.parts].map(([scope, part]) => {
-                    if (scope === 'global') {
-                        return {
-                            global: [
-                                handleNode(part.header),
-                                handleNode(part.dated)
-                            ]
-                        }
-                    }
-
-                    return {
-                        part: [
-                            handleNode(part.header),
-                            handleNode(part.dated)
-                        ],
-                        ':@': {
-                            '@_midi.port': 0,
-                            '@_midi.channel': scope,
-                            '@_number': scope + 1
-                        }
-                    }
-                })
+        performance: [...p.parts].map(([scope, part]) => {
+            if (scope === 'global') {
+                return {
+                    global: [
+                        handleNode(part.header),
+                        handleNode(part.dated)
+                    ]
+                }
             }
-        ],
+
+            return {
+                part: [
+                    handleNode(part.header),
+                    handleNode(part.dated)
+                ],
+                ':@': {
+                    '@_midi.port': 0,
+                    '@_midi.channel': scope,
+                    '@_number': scope + 1
+                }
+            }
+        }),
         ':@': {
             '@_name': p.name,
             '@_pulsesPerQuarter': 720
@@ -83,7 +93,8 @@ const handlePerformance = (p: Performance) => {
 const handlers: { [K in AnyNode['type']]?: (node: AnyNode) => object } = {
     performance: handlePerformance,
     styleDef: handleStyleDef,
-    dated: handleDated
+    dated: handleDated,
+    header: handleHeader
 }
 
 export const handleNode = <T extends { type: string }>(node: T) => {

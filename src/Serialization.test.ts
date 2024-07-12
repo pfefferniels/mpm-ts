@@ -50,28 +50,29 @@ test('serializes MPM', () => {
     <relatedResources uri="test.mei"></relatedResources>
   </metadata>
   <performance name="test performance" pulsesPerQuarter="720">
-    <part>
-      <global>
-        <header>
+    <global>
+      <header>
+        <articulationStyles>
           <styleDef name="performance_style">
             <articulationDef name="def_abc" absoluteVelocityChange="-10"></articulationDef>
           </styleDef>
-        </header>
-        <dated>
-          <articulationMap>
-            <articulation relativeDuration="0.5" date="720" xml:id="any_id"></articulation>
-          </articulationMap>
-        </dated>
-      </global>
-      <part midi.port="0" midi.channel="0" number="1">
-        <header></header>
-        <dated>
-          <articulationMap>
-            <style date="0" name.ref="performance_style"></style>
-            <articulation relativeDuration="0.2" date="1440" xml:id="any_id"></articulation>
-          </articulationMap>
-        </dated>
-      </part>
+        </articulationStyles>
+      </header>
+      <dated>
+        <articulationMap>
+          <style date="0" name.ref="performance_style"></style>
+          <articulation relativeDuration="0.5" date="720" xml:id="any_id"></articulation>
+        </articulationMap>
+      </dated>
+    </global>
+    <part midi.port="0" midi.channel="0" number="1">
+      <header></header>
+      <dated>
+        <articulationMap>
+          <style date="0" name.ref="performance_style"></style>
+          <articulation relativeDuration="0.2" date="1440" xml:id="any_id"></articulation>
+        </articulationMap>
+      </dated>
     </part>
   </performance>
 </mpm>`)
