@@ -45,7 +45,8 @@ export interface Asynchrony extends DatedInstruction<'asynchrony'>, WithXmlId {
  * Maps the <articulation> element of MPM
  */
 export interface Articulation extends DatedInstruction<'articulation'>, WithXmlId {
-    relativeDuration: number
+    relativeDuration?: number
+    absoluteVelocityChange?: number
 }
 
 export type SimpleDynamicsGradient = 'crescendo' | 'decrescendo' | 'no-gradient'
