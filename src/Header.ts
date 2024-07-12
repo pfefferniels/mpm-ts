@@ -23,7 +23,8 @@ export interface OrnamentDef extends Definition<'ornamentDef'> {
 }
 
 export interface ArticulationDef extends Definition<'articulationDef'> {
-    relativeDuration: number
+    relativeDuration?: number
+    absoluteVelocityChange?: number
 }
 
 export type AnyDefinition =
