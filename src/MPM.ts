@@ -252,9 +252,31 @@ export class MPM {
      * Will remove the contents of a given map type.
      */
     removeInstructions(instructionType: InstructionType, scope: Scope) {
+        if (!this.doc.performance.parts.has(scope)) return
+
         const part = this.doc.performance.parts.get(scope)
         const mapName = mapNames[instructionType]
         part.dated[mapName] = []
+    }
+
+    /**
+     * Removes a specified instruction
+     */
+    removeInstruction(instruction: AnyInstruction) {
+        const parts = this.doc.performance.parts.keys()
+
+        for (const part of parts) {
+            const dated = this.doc.performance.parts.get(part).dated
+            const mapName = mapNames[instruction.type]
+            const map = dated[mapName] as (typeof instruction)[] | undefined
+            if (!map) continue 
+
+            const index = map.indexOf(instruction)
+            if (index !== -1) {
+                map.splice(index, 1)
+                return
+            }
+        }
     }
 
     /**
