@@ -2,10 +2,48 @@ import { v4 } from "uuid"
 import { MPM } from "."
 import { Articulation, Asynchrony, Dated, Dynamics, Ornament, Rubato, Tempo } from "./Dated"
 import { Scope, Performance, Part, Document } from "./Document"
-import { Header, OrnamentDef } from "./Header"
+import { AnyDefinition, Header, OrnamentDef, StyleDef } from "./Header"
 import { XMLBuilder } from "fast-xml-parser"
 
-type AnyNode = Performance | Part | Document | Dated | Header
+type AnyNode = Performance | Part | Document | Dated | Header | StyleDef<AnyDefinition>
+
+const handleDated = (dated: Dated) => {
+    return {
+        dated: Object
+            .entries(dated)
+            .filter(([k,]) => k !== 'type')
+            .map(([k, v]) => {
+                const arr = []
+                if (Array.isArray(v)) {
+                    arr.push({
+                        'style': [],
+                        ':@': {
+                            '@_date': 0,
+                            '@_name.ref': 'performance_style'
+                        }
+                    })
+
+                    for (const instruction of v) {
+                        arr.push(handleNode(instruction))
+                    }
+                }
+
+                const obj = {}
+                obj[k] = arr
+
+                return obj
+            })
+    }
+}
+
+const handleStyleDef = (styleDef: StyleDef<AnyDefinition>) => {
+    return {
+        styleDef: styleDef.defs.map(def => handleNode(def)),
+        ':@': {
+            '@_name': styleDef.name
+        }
+    }
+}
 
 const handlePerformance = (p: Performance) => {
     return {
@@ -42,16 +80,18 @@ const handlePerformance = (p: Performance) => {
     }
 }
 
-export const handleNode = (node: AnyNode) => {
-    const handlers: { [K in AnyNode['type']]?: (node: AnyNode) => object } = {
-        performance: handlePerformance,
-    }
+const handlers: { [K in AnyNode['type']]?: (node: AnyNode) => object } = {
+    performance: handlePerformance,
+    styleDef: handleStyleDef,
+    dated: handleDated
+}
 
+export const handleNode = <T extends { type: string }>(node: T) => {
     if (!handlers[node.type]) {
         // use default
         const children = []
         const attrs = {}
-        Object.entries(node).forEach(([k, v]) => {
+        Object.entries(node as object).forEach(([k, v]) => {
             if (v === undefined) return
 
             if (k === 'type') return

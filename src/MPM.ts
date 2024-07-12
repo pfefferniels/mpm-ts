@@ -143,11 +143,15 @@ export class MPM {
         }
 
         if (!part.header[styleName]) {
-            part.header[styleName] = []
+            part.header[styleName] = {
+                type: 'styleDef',
+                name: 'performance_style',
+                defs: []
+            }
         }
 
-        const style = part.header[styleName] as (typeof definition)[]
-        style.push(definition)
+        const defs = part.header[styleName].defs as (typeof definition)[]
+        defs.push(definition)
     }
 
     /**
@@ -164,7 +168,9 @@ export class MPM {
     getDefinition(definitionType: DefinitionType, name: string): AnyDefinition | null {
         for (const [, part] of this.doc.performance.parts.entries()) {
             const style = styleNames[definitionType]
-            const defs = part.header[style] as (Definition<typeof definitionType>)[]
+            if (!part.header[style]) continue
+
+            const defs = part.header[style].defs as (Definition<typeof definitionType>)[]
             const found = defs.find(d => d.name === name)
             if (found) return found as AnyDefinition
         }
@@ -178,11 +184,14 @@ export class MPM {
 
         for (const part of parts) {
             for (const defType of defTypeToGet) {
-                const mapName = styleNames[defType]
-                const map = this.doc.performance.parts.get(part).header[mapName] as T[] | undefined 
-                if (!map) continue
+                if (!this.doc.performance.parts.has(part)) return
 
-                result.push(...map)
+                const styleName = styleNames[defType]
+                const style = this.doc.performance.parts.get(part).header[styleName]
+                if (!style) continue
+
+                const defs = style.defs as T[]
+                result.push(...defs)
             }
         }
         return result

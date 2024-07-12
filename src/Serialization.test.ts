@@ -1,5 +1,5 @@
 import { expect, test } from '@jest/globals';
-import { exportMPM, handleNode, MPM } from '.';
+import { exportMPM, MPM } from '.';
 
 test('serializes MPM', () => {
   const mpm = new MPM()
@@ -22,24 +22,27 @@ test('serializes MPM', () => {
     }
   ])
 
-    mpm.insertInstruction({
-        type: 'articulation',
-        relativeDuration: 0.5,
-        date: 720,
-        'xml:id': 'any_id'
-    }, 'global')
+  mpm.insertInstruction({
+    type: 'articulation',
+    relativeDuration: 0.5,
+    date: 720,
+    'xml:id': 'any_id'
+  }, 'global')
 
-    mpm.insertInstruction({
-        type: 'articulation',
-        relativeDuration: 0.2,
-        date: 1440,
-        'xml:id': 'any_id'
-    }, 0)
+  mpm.insertInstruction({
+    type: 'articulation',
+    relativeDuration: 0.2,
+    date: 1440,
+    'xml:id': 'any_id'
+  }, 0)
 
-    const serialized = handleNode(mpm.doc)
-    console.log(serialized)
+  mpm.insertDefinition({
+    type: 'articulationDef',
+    name: 'def_abc',
+    absoluteVelocityChange: -10
+  }, 'global')
 
-    expect(exportMPM(mpm)).toEqual(`
+  expect(exportMPM(mpm)).toEqual(`
 <mpm>
   <metadata>
     <author number="1">John Doe</author>
@@ -49,7 +52,11 @@ test('serializes MPM', () => {
   <performance name="test performance" pulsesPerQuarter="720">
     <part>
       <global>
-        <header></header>
+        <header>
+          <styleDef name="performance_style">
+            <articulationDef name="def_abc" absoluteVelocityChange="-10"></articulationDef>
+          </styleDef>
+        </header>
         <dated>
           <articulationMap>
             <articulation relativeDuration="0.5" date="720" xml:id="any_id"></articulation>
@@ -60,6 +67,7 @@ test('serializes MPM', () => {
         <header></header>
         <dated>
           <articulationMap>
+            <style date="0" name.ref="performance_style"></style>
             <articulation relativeDuration="0.2" date="1440" xml:id="any_id"></articulation>
           </articulationMap>
         </dated>

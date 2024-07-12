@@ -43,8 +43,13 @@ export const correspondingStyleNameFor = (definitionType: DefinitionType) => {
     return styleNames[definitionType]
 }
 
-type WithStylesFor<T> = T extends Definition<infer U>
-    ? { [K in typeof styleNames[U & keyof typeof styleNames]]?: T[] }
+export interface StyleDef<T extends AnyDefinition> extends Typed<'styleDef'> {
+    name: string
+    defs: T[]
+}
+
+type WithStylesFor<T extends AnyDefinition> = T extends Definition<infer U>
+    ? { [K in typeof styleNames[U & keyof typeof styleNames]]?: StyleDef<T> }
     : never;
 
 export type Header = UnionToIntersection<WithStylesFor<AnyDefinition>> & Typed<'header'>;
