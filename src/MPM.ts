@@ -233,7 +233,10 @@ export class MPM {
         }
         const map = part.dated[mapName] as (typeof instruction)[]
 
-        const existing = map.find(i => i.date === instruction.date)
+        const existing = map.find(i => (
+            i.date === instruction.date && i.noteid === instruction.noteid
+        ))
+
         if (existing) {
             for (const [k, v] of Object.entries(instruction)) {
                 if (!overwrite && existing[k]) continue
