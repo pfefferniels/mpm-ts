@@ -15,7 +15,7 @@ export class MPM {
             metadata: [],
             performance: {
                 type: 'performance',
-                name: '',
+                name: 'unknown',
                 parts: new Map()
             }
         }
