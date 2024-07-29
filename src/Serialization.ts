@@ -79,7 +79,8 @@ const handlePerformance = (p: Performance) => {
                 ':@': {
                     '@_midi.port': 0,
                     '@_midi.channel': scope,
-                    '@_number': scope + 1
+                    '@_number': scope + 1,
+                    '@_name': `part_${scope}`
                 }
             }
         }),
@@ -226,7 +227,7 @@ const parsePart = (scope: Scope, element: Element, mpm: MPM) => {
             type: 'articulation' as 'articulation',
             date: +(el.getAttribute('date') || 0),
             relativeDuration: +(el.getAttribute('relativeDuration') || ''),
-            absoluteVelocityChange: +(el.getAttribute('absoluteVelocityChange' || '')),
+            relativeVelocity: +(el.getAttribute('relativeVelocity' || '')),
             'xml:id': el.getAttribute('xml:id') || `articulation_${v4()}`
         }
 

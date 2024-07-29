@@ -39,7 +39,7 @@ test('serializes MPM', () => {
   mpm.insertDefinition({
     type: 'articulationDef',
     name: 'def_abc',
-    absoluteVelocityChange: -10
+    relativeVelocity: -10
   }, 'global')
 
   expect(exportMPM(mpm)).toEqual(`
@@ -54,7 +54,7 @@ test('serializes MPM', () => {
       <header>
         <articulationStyles>
           <styleDef name="performance_style">
-            <articulationDef name="def_abc" absoluteVelocityChange="-10"></articulationDef>
+            <articulationDef name="def_abc" relativeVelocity="-10"></articulationDef>
           </styleDef>
         </articulationStyles>
       </header>
@@ -65,7 +65,7 @@ test('serializes MPM', () => {
         </articulationMap>
       </dated>
     </global>
-    <part midi.port="0" midi.channel="0" number="1">
+    <part midi.port="0" midi.channel="0" number="1" name="part_0">
       <header></header>
       <dated>
         <articulationMap>
