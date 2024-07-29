@@ -46,7 +46,7 @@ export interface Asynchrony extends DatedInstruction<'asynchrony'>, WithXmlId {
  */
 export interface Articulation extends DatedInstruction<'articulation'>, WithXmlId {
     relativeDuration?: number
-    absoluteVelocityChange?: number
+    relativeVelocity?: number
 }
 
 export type SimpleDynamicsGradient = 'crescendo' | 'decrescendo' | 'no-gradient'
