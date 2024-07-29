@@ -34,7 +34,7 @@ export class MPM {
      * @todo
      */
     instructionsEffectiveAtDate<T extends AnyInstruction>(date: number, type?: InstructionType, scope?: Scope): T[] {
-        const parts: Scope[] = scope ? [scope] : [...this.doc.performance.parts.keys()]
+        const parts: Scope[] = scope !== undefined ? [scope] : [...this.doc.performance.parts.keys()]
         const instructionTypesToGet = type ? [type] : instructionTypes
 
         const result: T[] = []
@@ -76,7 +76,7 @@ export class MPM {
      * @todo
      */
     instructionEffectiveInRange<T extends AnyInstruction>(from: number, to: number, type?: InstructionType, part?: Scope): T[] {
-        const parts: Scope[] = part ? [part] : [...this.doc.performance.parts.keys()]
+        const parts: Scope[] = part !== undefined ? [part] : [...this.doc.performance.parts.keys()]
         const instructionTypesToGet = type ? [type] : instructionTypes
 
         const result: T[] = []
@@ -179,7 +179,7 @@ export class MPM {
 
     getDefinitions<T extends AnyDefinition>(type: DefinitionType, scope?: Scope): T[] {
         const result = []
-        const parts: Scope[] = scope ? [scope] : [...this.doc.performance.parts.keys()]
+        const parts: Scope[] = scope !== undefined ? [scope] : [...this.doc.performance.parts.keys()]
         const defTypeToGet = type ? [type] : definitionTypes
 
         for (const part of parts) {
@@ -294,7 +294,7 @@ export class MPM {
         }
 
         const result = []
-        const parts: Scope[] = scope ? [scope] : [...this.doc.performance.parts.keys()]
+        const parts: Scope[] = scope !== undefined ? [scope] : [...this.doc.performance.parts.keys()]
         const instructionTypesToGet = type ? [type] : instructionTypes
 
         for (const part of parts) {
