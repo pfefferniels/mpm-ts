@@ -227,7 +227,7 @@ const parsePart = (scope: Scope, element: Element, mpm: MPM) => {
             type: 'articulation' as 'articulation',
             date: +(el.getAttribute('date') || 0),
             relativeDuration: +(el.getAttribute('relativeDuration') || ''),
-            relativeVelocity: +(el.getAttribute('relativeVelocity' || '')),
+            relativeVelocity: +(el.getAttribute('relativeVelocity') || ''),
             'xml:id': el.getAttribute('xml:id') || `articulation_${v4()}`
         }
 
