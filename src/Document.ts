@@ -41,6 +41,7 @@ export interface TransformationInfo extends Typed<'transformation'> {
 export interface AppInfo extends Typed<'appInfo'> {
     version: string
     name: string
+    url: string
 
     children: TransformationInfo[]
 }
