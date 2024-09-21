@@ -19,21 +19,33 @@ export interface Performance extends Typed<'performance'> {
     parts: Map<Scope, Part>
 }
 
-type RelatedResource = {
+export type RelatedResource = {
     uri: string
     type: string
 }
 
-interface Author extends Typed<'author'> {
+export interface Author extends Typed<'author'> {
     number: number 
     text: string
 }
 
-interface Comment extends Typed<'comment'> {
+export interface Comment extends Typed<'comment'> {
     text: string
 }
 
-export type Metadata = (Author | Comment | RelatedResource)[]
+export interface TransformationInfo extends Typed<'transformation'> {
+    name: string
+    cdata: string
+}
+
+export interface AppInfo extends Typed<'appInfo'> {
+    version: string
+    name: string
+
+    children: TransformationInfo[]
+}
+
+export type Metadata = (Author | Comment | RelatedResource | AppInfo)[]
 
 export interface Document extends Typed<'mpm'> {
     performance: Performance

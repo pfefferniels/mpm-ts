@@ -20,7 +20,6 @@ const handleHeader = (header: Header) => {
     }
 }
 
-
 const handleDated = (dated: Dated) => {
     return {
         dated: Object
@@ -114,6 +113,16 @@ export const handleNode = <T extends { type: string }>(node: T) => {
                 })
                 return
             }
+            else if (k === 'cdata') {
+                children.push({
+                    '__cdata': [
+                        {
+                            '#text': v
+                        }
+                    ]
+                })
+                return
+            }
 
             if (typeof v === 'number' || typeof v === 'string') {
                 attrs[`@_${k}`] = v
@@ -122,9 +131,14 @@ export const handleNode = <T extends { type: string }>(node: T) => {
                 attrs[`@_${k}`] = v ? 'true' : 'false'
             }
             else if (Array.isArray(v)) {
-                const obj = {}
-                obj[k] = v.map(node => handleNode(node))
-                children.push(obj)
+                if (k === 'children') {
+                    children.push(...v.map(node => handleNode(node)))
+                }
+                else {
+                    const obj = {}
+                    obj[k] = v.map(node => handleNode(node))
+                    children.push(obj)
+                }
             }
             else {
                 children.push(handleNode(v))
@@ -132,8 +146,8 @@ export const handleNode = <T extends { type: string }>(node: T) => {
         })
 
         const obj = {}
-        obj[node.type] = children,
-            obj[':@'] = attrs
+        obj[node.type] = children
+        obj[':@'] = attrs
         return obj
     }
     else {
@@ -147,8 +161,10 @@ export const exportMPM = (mpm: MPM) => {
     const builder = new XMLBuilder({
         preserveOrder: true,
         ignoreAttributes: false,
-        format: true
+        format: true,
+        cdataPropName: '__cdata'
     })
+
     return builder.build([root])
 }
 
