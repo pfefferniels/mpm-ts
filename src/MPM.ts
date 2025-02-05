@@ -1,5 +1,5 @@
 import { AnyDefinition, Definition, DefinitionType, definitionTypes, styleNames } from "./Header"
-import { AnyInstruction, InstructionType, instructionTypes, mapNames, Rubato } from "./Dated"
+import { AnyInstruction, InstructionType, instructionTypes, mapNames, Rubato, Style } from "./Dated"
 import { Document, Metadata, Scope } from "./Document"
 
 /**
@@ -213,25 +213,7 @@ export class MPM {
     }
 
     insertInstruction(instruction: AnyInstruction, scope: Scope, overwrite = false) {
-        if (!this.doc.performance.parts.has(scope)) {
-            this.doc.performance.parts.set(scope, {
-                type: 'part',
-                dated: {
-                    type: 'dated'
-                },
-                header: {
-                    type: 'header'
-                }
-            })
-        }
-
-        const part = this.doc.performance.parts.get(scope)
-        const mapName = mapNames[instruction.type]
-
-        if (!part.dated[mapName]) {
-            part.dated[mapName] = []
-        }
-        const map = part.dated[mapName] as (typeof instruction)[]
+        const map = this.insertMap(instruction.type, scope) as (typeof instruction)[]
 
         const existing = map.find(i => (
             i.date === instruction.date && i.noteid === instruction.noteid
@@ -246,6 +228,31 @@ export class MPM {
         else {
             map.push(instruction)
         }
+    }
+
+    private insertPart(scope: Scope) {
+        if (!this.doc.performance.parts.has(scope)) {
+            this.doc.performance.parts.set(scope, {
+                type: 'part',
+                dated: {
+                    type: 'dated'
+                },
+                header: {
+                    type: 'header'
+                }
+            })
+        }
+
+        return this.doc.performance.parts.get(scope)
+    }
+
+    private insertMap(instructionType: InstructionType, scope: Scope) {
+        const part = this.insertPart(scope)
+        const mapName = mapNames[instructionType]
+        if (!part.dated[mapName]) {
+            part.dated[mapName] = []
+        }
+        return part.dated[mapName]
     }
 
     /**
@@ -307,6 +314,11 @@ export class MPM {
             }
         }
         return result
+    }
+
+    insertStyle(style: Style, instructionType: InstructionType, scope: Scope) {
+        const map = this.insertMap(instructionType, scope)
+        map.push(style)
     }
 
     setPerformanceName(performanceName: string) {

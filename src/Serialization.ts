@@ -1,6 +1,6 @@
 import { v4 } from "uuid"
 import { MPM } from "."
-import { Articulation, Asynchrony, Dated, Dynamics, Ornament, Rubato, Tempo } from "./Dated"
+import { Articulation, Asynchrony, Dated, Dynamics, Movement, Ornament, Rubato, Tempo } from "./Dated"
 import { Scope, Performance, Part, Document } from "./Document"
 import { AnyDefinition, Header, OrnamentDef, StyleDef } from "./Header"
 import { XMLBuilder } from "fast-xml-parser"
@@ -28,14 +28,6 @@ const handleDated = (dated: Dated) => {
             .map(([k, v]) => {
                 const arr = []
                 if (Array.isArray(v)) {
-                    arr.push({
-                        'style': [],
-                        ':@': {
-                            '@_date': 0,
-                            '@_name.ref': 'performance_style'
-                        }
-                    })
-
                     for (const instruction of v) {
                         arr.push(handleNode(instruction))
                     }
@@ -198,6 +190,19 @@ const parsePart = (scope: Scope, element: Element, mpm: MPM) => {
         return result
     })
 
+    const movements = [...element.querySelectorAll('movement')].map(el => {
+        const result: Movement = {
+            type: 'movement',
+            date: +(el.getAttribute('date') || 0),
+            position: +(el.getAttribute('position') || 0),
+            controller: el.getAttribute('controller') as 'sustain' | 'soft',
+            'xml:id': el.getAttribute('xml:id') || `movement_${v4()}`,
+            'transition.to': (+el.getAttribute('transition.to')) || undefined,
+            protraction: (+el.getAttribute('protraction')) || undefined,
+        }
+        return result
+    })
+
     const ornaments = [...element.querySelectorAll('ornament')].map(el => {
         const result: Ornament = {
             type: 'ornament' as 'ornament',
@@ -278,6 +283,7 @@ const parsePart = (scope: Scope, element: Element, mpm: MPM) => {
     })
 
     mpm.insertInstructions(dynamics, scope)
+    mpm.insertInstructions(movements, scope)
     mpm.insertInstructions(ornaments, scope)
     mpm.insertInstructions(tempos, scope)
     mpm.insertInstructions(asynchronies, scope)

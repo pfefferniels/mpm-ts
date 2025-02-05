@@ -22,6 +22,13 @@ test('serializes MPM', () => {
     }
   ])
 
+  mpm.insertStyle({
+    type: 'style',
+    'xml:id': 'style_1',
+    date: 0,
+    'name.ref': 'performance_style'
+  }, 'articulation', 'global')
+
   mpm.insertInstruction({
     type: 'articulation',
     relativeDuration: 0.5,
@@ -60,7 +67,7 @@ test('serializes MPM', () => {
       </header>
       <dated>
         <articulationMap>
-          <style date="0" name.ref="performance_style"></style>
+          <style xml:id="style_1" date="0" name.ref="performance_style"></style>
           <articulation relativeDuration="0.5" date="720" xml:id="any_id"></articulation>
         </articulationMap>
       </dated>
@@ -69,7 +76,6 @@ test('serializes MPM', () => {
       <header></header>
       <dated>
         <articulationMap>
-          <style date="0" name.ref="performance_style"></style>
           <articulation relativeDuration="0.2" date="1440" xml:id="any_id"></articulation>
         </articulationMap>
       </dated>

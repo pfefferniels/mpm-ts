@@ -4,6 +4,12 @@ interface WithXmlId {
     'xml:id': string
 }
 
+export interface Style extends WithXmlId, Typed<'style'> {
+    date: number
+    'name.ref': string 
+    defaultArticulation?: string
+}
+
 export interface DatedInstruction<T extends string> extends Typed<T> {
     date: number
 
@@ -19,6 +25,17 @@ export interface DatedInstruction<T extends string> extends Typed<T> {
  */
 export interface Dynamics extends DatedInstruction<'dynamics'>, WithXmlId {
     'volume': number | string
+    'transition.to'?: number
+    'protraction'?: number
+    'curvature'?: number
+}
+
+/**
+ * Maps the <movement> element of MPM
+ */
+export interface Movement extends DatedInstruction<'movement'>, WithXmlId {
+    'position': number
+    'controller': 'sustain' | 'soft'
     'transition.to'?: number
     'protraction'?: number
     'curvature'?: number
@@ -80,37 +97,42 @@ export interface Rubato extends DatedInstruction<'rubato'>, WithXmlId {
 }
 
 export type AnyInstruction =
-    | Tempo
-    | Ornament
-    | Dynamics
-    | Asynchrony
     | Articulation
+    | Asynchrony
+    | Dynamics
+    | Movement
+    | Ornament
     | Rubato
+    | Tempo
 
 export const instructionTypes =
     [
-        'tempo',
-        'ornament',
-        'dynamics',
-        'asynchrony',
         'articulation',
-        'rubato'
+        'asynchrony',
+        'dynamics',
+        'movement',
+        'ornament',
+        'rubato',
+        'tempo'
     ] as const
 
 export type InstructionType = typeof instructionTypes[number]
 
 export const mapNames = {
-    'tempo': 'tempoMap',
-    'dynamics': 'dynamicsMap',
-    'asynchrony': 'asynchronyMap',
-    'ornament': 'ornamentationMap',
     'articulation': 'articulationMap',
-    'rubato': 'rubatoMap'
+    'asynchrony': 'asynchronyMap',
+    'dynamics': 'dynamicsMap',
+    'movement': 'movementMap',
+    'ornament': 'ornamentationMap',
+    'rubato': 'rubatoMap',
+    'tempo': 'tempoMap'
 } as const
 
 // Utility type to map instruction types to their respective array types using infer
 export type WithMapsFor<T> = T extends DatedInstruction<infer U>
-    ? { [K in typeof mapNames[U & keyof typeof mapNames]]?: T[] }
+    ? { [K in typeof mapNames[U & keyof typeof mapNames]]?: (T | Style)[] }
     : never;
 
-export type Dated = UnionToIntersection<WithMapsFor<AnyInstruction>> & Typed<'dated'>;
+export type Dated =
+    & UnionToIntersection<WithMapsFor<AnyInstruction>>
+    & Typed<'dated'>
