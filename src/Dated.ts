@@ -94,6 +94,15 @@ export interface Rubato extends DatedInstruction<'rubato'>, WithXmlId {
     earlyEnd?: number
 }
 
+/**
+ * Maps the <accentuationPattern> element of MPM
+ */
+export interface AccentuationPattern extends DatedInstruction<'accentuationPattern'>, WithXmlId {
+    'name.ref': string
+    loop: boolean
+    scale: number
+}
+
 export type AnyInstruction =
     | Articulation
     | Asynchrony
@@ -102,6 +111,7 @@ export type AnyInstruction =
     | Ornament
     | Rubato
     | Tempo
+    | AccentuationPattern
 
 export const instructionTypes =
     [
@@ -111,7 +121,8 @@ export const instructionTypes =
         'movement',
         'ornament',
         'rubato',
-        'tempo'
+        'tempo',
+        'accentuationPattern'
     ] as const
 
 export type InstructionType = typeof instructionTypes[number]
@@ -123,7 +134,8 @@ export const mapNames = {
     'movement': 'movementMap',
     'ornament': 'ornamentationMap',
     'rubato': 'rubatoMap',
-    'tempo': 'tempoMap'
+    'tempo': 'tempoMap',
+    'accentuationPattern': 'metricalAccentuationMap'
 } as const
 
 // Utility type to map instruction types to their respective array types using infer

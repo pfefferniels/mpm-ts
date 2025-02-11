@@ -276,7 +276,7 @@ export class MPM {
             const dated = this.doc.performance.parts.get(part).dated
             const mapName = mapNames[instruction.type]
             const map = dated[mapName] as (typeof instruction)[] | undefined
-            if (!map) continue 
+            if (!map) continue
 
             const index = map.indexOf(instruction)
             if (index !== -1) {
@@ -307,10 +307,14 @@ export class MPM {
         for (const part of parts) {
             for (const instructionType of instructionTypesToGet) {
                 const mapName = mapNames[instructionType]
-                const map = this.doc.performance.parts.get(part).dated[mapName] as T[] | undefined
+
+                const partElement = this.doc.performance.parts.get(part)
+                if (!partElement) continue
+
+                const map = partElement.dated[mapName] 
                 if (!map) continue
 
-                result.push(...map)
+                result.push(...(map.filter(i => i.type !== 'style') as T[]))
             }
         }
         return result
@@ -321,6 +325,12 @@ export class MPM {
         map.push(style)
     }
 
+    getStyles(instructionType: InstructionType, scope: Scope): Style[] {
+        const part = this.doc.performance.parts.get(scope)
+        const mapName = mapNames[instructionType]
+        return part.dated[mapName].filter(i => i.type === 'style')
+    }
+
     setPerformanceName(performanceName: string) {
         this.doc.performance.name = performanceName
     }
@@ -329,3 +339,4 @@ export class MPM {
         this.doc.metadata = metadata
     }
 }
+

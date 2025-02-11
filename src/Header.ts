@@ -27,16 +27,30 @@ export interface ArticulationDef extends Definition<'articulationDef'> {
     relativeVelocity?: number
 }
 
+export interface Accentuation extends Typed<'accentuation'> {
+    beat: number
+    value: number
+    'transition.from': number
+    'transition.to': number
+}
+
+export interface AccentuationPatternDef extends Definition<'accentuationPatternDef'> {
+    children: Accentuation[]
+    length: number
+}
+
 export type AnyDefinition =
     | OrnamentDef
     | ArticulationDef
+    | AccentuationPatternDef
 
-export const definitionTypes = ['ornamentDef', 'articulationDef'] as const
+export const definitionTypes = ['ornamentDef', 'articulationDef', 'accentuationPatternDef'] as const
 export type DefinitionType = typeof definitionTypes[number];
 
 export const styleNames = {
     ornamentDef: 'ornamentationStyles',
-    articulationDef: 'articulationStyles'
+    articulationDef: 'articulationStyles',
+    accentuationPatternDef: 'metricalAccentuationStyles'
 } as const
 
 export const correspondingStyleNameFor = (definitionType: DefinitionType) => {
