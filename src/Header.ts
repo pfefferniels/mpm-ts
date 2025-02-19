@@ -15,6 +15,7 @@ export interface TemporalSpread extends Typed<'temporalSpread'> {
     frameLength: number 
     'time.unit': 'ticks' | 'milliseconds'
     'noteoff.shift': NoteOffShift
+    intensity?: number
 }
 
 export interface OrnamentDef extends Definition<'ornamentDef'> {

@@ -77,6 +77,7 @@ export interface Ornament extends DatedInstruction<'ornament'>, WithXmlId {
     'frameLength'?: number
     'frame.start'?: number
     'noteoff.shift'?: NoteOffShift,
+    'intensity'?: number
     'transition.from'?: number
     'transition.to'?: number
     'time.unit'?: 'ticks' | 'milliseconds'
