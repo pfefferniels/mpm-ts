@@ -88,7 +88,7 @@ export interface Ornament extends DatedInstruction<'ornament'>, WithXmlId {
  * Maps the <rubato> element of MPM
  */
 export interface Rubato extends DatedInstruction<'rubato'>, WithXmlId {
-    frameLength?: number
+    frameLength: number
     loop?: boolean
     intensity?: number
     lateStart?: number 
