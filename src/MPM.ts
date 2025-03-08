@@ -197,6 +197,20 @@ export class MPM {
         return result
     }
 
+    removeDefinition(definition: AnyDefinition) {
+        for (const [, part] of this.doc.performance.parts.entries()) {
+            const style = styleNames[definition.type]
+            if (!part.header[style]) continue
+
+            const defs = part.header[style].defs as (typeof definition)[]
+            const index = defs.indexOf(definition)
+            if (index !== -1) {
+                defs.splice(index, 1)
+                return
+            }
+        }
+    }
+
     /**
      * Based on the given instructions type, this method will
      * insert them into their corresponding map, e.g. <dynamics>
@@ -311,7 +325,7 @@ export class MPM {
                 const partElement = this.doc.performance.parts.get(part)
                 if (!partElement) continue
 
-                const map = partElement.dated[mapName] 
+                const map = partElement.dated[mapName]
                 if (!map) continue
 
                 result.push(...(map.filter(i => i.type !== 'style') as T[]))
@@ -328,6 +342,7 @@ export class MPM {
     getStyles(instructionType: InstructionType, scope: Scope): Style[] {
         const part = this.doc.performance.parts.get(scope)
         const mapName = mapNames[instructionType]
+        if (!part.dated[mapName]) return []
         return part.dated[mapName].filter(i => i.type === 'style')
     }
 
