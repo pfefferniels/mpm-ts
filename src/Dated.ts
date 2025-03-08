@@ -64,6 +64,8 @@ export interface Asynchrony extends DatedInstruction<'asynchrony'>, WithXmlId {
 export interface Articulation extends DatedInstruction<'articulation'>, WithXmlId {
     relativeDuration?: number
     relativeVelocity?: number
+    absoluteDuration?: number
+    absoluteDurationChange?: number
 }
 
 export type NoteOffShift = boolean | 'monophonic'
