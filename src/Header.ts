@@ -26,6 +26,8 @@ export interface OrnamentDef extends Definition<'ornamentDef'> {
 export interface ArticulationDef extends Definition<'articulationDef'> {
     relativeDuration?: number
     relativeVelocity?: number
+    absoluteDuration?: number
+    absoluteDurationChange?: number
 }
 
 export interface Accentuation extends Typed<'accentuation'> {
