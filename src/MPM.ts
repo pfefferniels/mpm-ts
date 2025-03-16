@@ -307,7 +307,7 @@ export class MPM {
      * all instruction types will be considered.
      * @returns 
      */
-    getInstructions<T>(type?: InstructionType, scope?: Scope): T[] {
+    getInstructions<T extends AnyInstruction>(type?: InstructionType, scope?: Scope): T[] {
         // if the user asks for a specific scope 
         // which is not given, we return an empty array
         if (scope !== undefined && !this.doc.performance.parts.has(scope)) {
