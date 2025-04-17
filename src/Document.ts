@@ -33,9 +33,15 @@ export interface Comment extends Typed<'comment'> {
     text: string
 }
 
+export interface Note extends Typed<'note'> {
+    text: string
+}
+
 export interface TransformationInfo extends Typed<'transformation'> {
+    'xml:id': string
     name: string
     cdata: string
+    children: Note[]
 }
 
 export interface AppInfo extends Typed<'appInfo'> {
