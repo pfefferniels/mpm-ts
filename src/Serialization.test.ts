@@ -93,4 +93,5 @@ test('deserializes MPM', () => {
   expect(mpm.getInstructions().length).toBe(2)
   expect(mpm.getDefinitions('articulationDef').length).toBe(1)
   expect(mpm.getStyles('articulation', 'global').length).toBe(1)
+  expect(mpm.doc.metadata.length).toBe(3)
 })

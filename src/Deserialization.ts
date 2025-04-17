@@ -19,7 +19,7 @@ export const importMPM = (xml: string): MPM => {
     return mpm;
 }
 
-function parseNode(node: any): any {
+const parseNode = (node: any): any => {
     const tag = Object.keys(node).find(k => k !== ':@');
     const attrs = node[':@'] || {}
 
@@ -27,6 +27,12 @@ function parseNode(node: any): any {
         if (key.startsWith('@_')) {
             attrs[key.slice(2)] = value;
             delete attrs[key];
+        }
+    }
+
+    for (const [key, value] of Object.entries(attrs)) {
+        if (typeof value === 'string' && !isNaN(Number(value))) {
+            attrs[key] = Number(value);
         }
     }
 
@@ -99,7 +105,21 @@ function parseNode(node: any): any {
             defs: node[tag].map(obj => parseNode(obj))
         }
     }
+    else if (tag === 'metadata') {
+        return node[tag].map(obj => parseNode(obj));
+    }
 
+    if (Array.isArray(node[tag])) {
+        const textNode = node[tag].find(obj => '#text' in obj);
+        if (textNode) {
+            attrs.text = textNode['#text'];
+        }
+
+        const cdataNode = node[tag].find(obj => '__cdata' in obj);
+        if (cdataNode) {
+            attrs.cdata = cdataNode['__cdata'];
+        }
+    }
 
     return {
         'type': tag,

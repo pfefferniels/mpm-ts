@@ -3,4 +3,4 @@ export * from './Document'
 export * from './Header'
 export * from './MPM'
 export * from './Serialization'
-
+export * from './Deserialization'
