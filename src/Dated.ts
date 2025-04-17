@@ -4,13 +4,17 @@ interface WithXmlId {
     'xml:id': string
 }
 
+interface WithCorresp {
+    corresp?: string
+}
+
 export interface Style extends WithXmlId, Typed<'style'> {
     date: number
     'name.ref': string 
     defaultArticulation?: string
 }
 
-export interface DatedInstruction<T extends string> extends Typed<T> {
+export interface DatedInstruction<T extends string> extends Typed<T>, WithCorresp {
     date: number
 
     // optionally, a particular note can be specified
