@@ -116,8 +116,12 @@ const parseNode = (node: any): any => {
         }
 
         const cdataNode = node[tag].find(obj => '__cdata' in obj);
-        if (cdataNode) {
-            attrs.cdata = cdataNode['__cdata'];
+        if (cdataNode
+            && Array.isArray(cdataNode['__cdata'])
+            && cdataNode['__cdata'].length > 0
+            && cdataNode['__cdata'][0]['#text']
+        ) {
+            attrs.cdata = cdataNode['__cdata'][0]['#text'];
         }
     }
 
