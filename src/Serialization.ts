@@ -147,7 +147,7 @@ export const handleNode = <T extends { type: string }>(node: T) => {
     }
 }
 
-export const exportMPM = (mpm: MPM) => {
+export const exportMPM = (mpm: MPM): string => {
     const root = handleNode(mpm.doc)
 
     const builder = new XMLBuilder({
