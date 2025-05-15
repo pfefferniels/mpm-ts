@@ -43,9 +43,9 @@ export class MPM {
             for (const part of parts) {
                 const instructions = this.getInstructions<T>(type, part)
 
-                const found = instructions.find(instruction => (instruction as any).date === date)
-                if (found) {
-                    result.push(found)
+                const found = instructions.filter(instruction => (instruction as any).date === date)
+                if (found.length) {
+                    result.push(...found)
                 }
                 else {
                     const ongoingInstruction =
