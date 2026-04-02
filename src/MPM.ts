@@ -1,5 +1,5 @@
-import { AnyDefinition, Definition, DefinitionType, definitionTypes, styleNames } from "./Header"
-import { AnyInstruction, InstructionType, instructionTypes, mapNames, Rubato, Style } from "./Dated"
+import { AccentuationPatternDef, AnyDefinition, Definition, DefinitionType, definitionTypes, styleNames } from "./Header"
+import { AccentuationPattern, AnyInstruction, InstructionType, instructionTypes, mapNames, Rubato, Style } from "./Dated"
 import { Document, Metadata, Scope } from "./Document"
 
 /**
@@ -47,20 +47,32 @@ export class MPM {
                 if (found.length) {
                     result.push(...found)
                 }
-                else {
-                    const ongoingInstruction =
-                        instructions.slice().reverse().find(instruction => (instruction as any).date <= date)
 
-                    if (!ongoingInstruction) continue
+                const ongoingInstruction =
+                    instructions.slice().reverse().find(instruction => (instruction as any).date <= date)
 
-                    if (instructionType === 'tempo') {
+                if (!ongoingInstruction) continue
+
+                if (instructionType === 'tempo' || instructionType === 'dynamics' || instructionType === 'movement') {
+                    result.push(ongoingInstruction)
+                }
+                else if (instructionType === 'rubato') {
+                    const rubato = ongoingInstruction as T as Rubato
+                    if (rubato.loop) result.push(ongoingInstruction)
+                    if (date < (rubato.date + rubato.frameLength)) {
                         result.push(ongoingInstruction)
                     }
-                    else if (instructionType === 'rubato') {
-                        const rubato = ongoingInstruction as T as Rubato
-                        if (rubato.loop) result.push(ongoingInstruction)
-                        if (date < (rubato.date + rubato.frameLength)) {
-                            result.push(ongoingInstruction)
+                }
+                else if (instructionType === 'accentuationPattern') {
+                    const pattern = ongoingInstruction as T as AccentuationPattern
+                    const nameRef = pattern['name.ref']
+                    if (nameRef) {
+                        const patternDef = this.getDefinition('accentuationPatternDef', nameRef) as AccentuationPatternDef
+                        if (patternDef) {
+                            const length = (patternDef.length * 720 * 4) / 4
+                            if (date < (pattern.date + length)) {
+                                result.push(ongoingInstruction)
+                            }
                         }
                     }
                 }
@@ -165,6 +177,18 @@ export class MPM {
         })
     }
 
+    getAnyDefinition(name: string): AnyDefinition | null {
+        for (const [, part] of this.doc.performance.parts.entries()) {
+            for (const style of Object.values(styleNames)) {
+                if (!part.header[style]) continue
+
+                const defs = part.header[style].defs
+                const found = defs.find(d => d.name === name)
+                if (found) return found as AnyDefinition
+            }
+        }
+    }
+
     getDefinition(definitionType: DefinitionType, name: string): AnyDefinition | null {
         for (const [, part] of this.doc.performance.parts.entries()) {
             const style = styleNames[definitionType]
@@ -240,7 +264,9 @@ export class MPM {
             }
         }
         else {
-            map.push(instruction)
+            const index = map.findIndex(i => i.date > instruction.date)
+            if (index === -1) map.push(instruction)
+            else map.splice(index, 0, instruction)
         }
     }
 

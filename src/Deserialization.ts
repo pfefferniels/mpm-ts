@@ -108,6 +108,14 @@ const parseNode = (node: any): any => {
     else if (tag === 'metadata') {
         return node[tag].map(obj => parseNode(obj));
     }
+    else if (tag === 'ornamentDef') {
+        return {
+            type: tag,
+            ...attrs,
+            dynamicsGradient: node[tag].find(obj => 'dynamicsGradient' in obj) ? parseNode(node[tag].find(obj => 'dynamicsGradient' in obj)) : undefined,
+            temporalSpread: node[tag].find(obj => 'temporalSpread' in obj) ? parseNode(node[tag].find(obj => 'temporalSpread' in obj)) : undefined,
+        }
+    }
 
     if (Array.isArray(node[tag])) {
         const textNode = node[tag].find(obj => '#text' in obj);
